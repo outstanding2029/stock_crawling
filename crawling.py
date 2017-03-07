@@ -3,13 +3,16 @@ import requests
 import time
 from lxml import html
 
-keyword_list = ['투자']
+import db_api
+import rest_api
+
+keyword_list = ['투자', '억 규모', '억원 규모']
 target_url = 'http://finance.naver.com/item/news_news.nhn?code=%s&page='
 
 def AnalyzePage(code):
     if code is None:
         return
-        
+
     page = requests.get(target_url % code)
     tree = html.fromstring(page.text);
     d = datetime.date.today()
@@ -28,7 +31,8 @@ def AnalyzePage(code):
     if int(date[0]) == d.year and int(date[1]) == d.month and int(date[2]) == d.day:
         for keyword in keyword_list:
             idx = title_text.find(keyword)
-            if idx != -1:
+            if idx != -1 and db_api.is_exist(code) == None:
+                db_api.insert(code, title_text)
                 print(code + ' : ' + title_text)
 
 in_file = open('code.txt', 'r')
