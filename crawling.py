@@ -5,6 +5,7 @@ from lxml import html
 
 import db_api
 import mail_api
+import preferences as prefs
 import rest_api
 
 TARGET_URL = 'http://finance.naver.com/item/news_news.nhn?code=%s&page='
@@ -12,8 +13,10 @@ STOCK_URL = 'http://finance.naver.com/item/news.nhn?code=%s'
 
 CODE_FILE_NAME = 'code.txt'
 
-KEYWORD_LIST = ['투자', '억 규모', '억원 규모']
-REPLACE_LIST = ['성공투자', '투자증권', '투자권유', '투자의견', '투자자', 'NH투자', '투자 배급', '투자 세미나']
+KEYWORD_LIST = ['투자', '억 규모', '억원 규모', '공급계약', '기대', '출시']
+REPLACE_LIST = ['성공투자', '투자증권', '투자권유', '투자의견', '투자자', 'NH투자', '투자 배급',
+                '투자 세미나', '주식투자', '부동산 투자', '투자설명회', '투자관리', '대체투자',
+                '금융투자', '투자전략']
 
 def analyze_page(code):
     if code is None:
@@ -56,3 +59,5 @@ while True:
     message = analyze()
     if len(message) != 0:
         mail_api.send_mail('stock', message)
+    if prefs.RUN_TYPE == 'once':
+        break
